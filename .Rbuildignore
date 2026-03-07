@@ -15,5 +15,13 @@
 ^CONTRIBUTING\.html$
 ^_roxy\.R$
 ^build_package\.R$
+^install_package\.R$
+^reinstall\.R$
 ^examples$
-^temp_wass2\.txt$
+^temp_.*
+^test_.*\.R$
+^.*\.out$
+^.*\.log$
+^Rplots\.pdf$
+^run_doc\.bat$
+^\.vscode$
