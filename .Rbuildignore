@@ -25,3 +25,4 @@
 ^Rplots\.pdf$
 ^run_doc\.bat$
 ^\.vscode$
+^blog_post_r_bloggers\.md$
