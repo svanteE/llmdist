@@ -400,3 +400,94 @@ lrt_trace_distance <- function(mu1, Sigma1, mu2, Sigma2) {
   
   as.numeric(distance)
 }
+
+#' Main Distance Function for Multivariate Normal Distributions
+#'
+#' Computes distance between two multivariate normal distributions using the 
+#' specified method. By default, uses the fast LRT trace distance which provides 
+#' an efficient approximation suitable for high-dimensional problems and 
+#' large-scale applications.
+#'
+#' @param mu1 Mean vector of the first distribution
+#' @param Sigma1 Covariance matrix of the first distribution  
+#' @param mu2 Mean vector of the second distribution
+#' @param Sigma2 Covariance matrix of the second distribution
+#' @param method Character string specifying the distance method. Options include:
+#'   \describe{
+#'     \item{"lrt_trace"}{**DEFAULT**: Fast LRT trace distance (recommended for p > 50)}
+#'     \item{"wasserstein2"}{Wasserstein-2/Bures distance (optimal transport)}
+#'     \item{"fisher_rao"}{Fisher-Rao distance (information geometry, slowest)}
+#'     \item{"hellinger"}{Hellinger distance (bounded [0,1])}  
+#'     \item{"bhattacharyya"}{Bhattacharyya distance (classification)}
+#'     \item{"kl"}{Kullback-Leibler divergence (asymmetric)}
+#'     \item{"kl_sym"}{Symmetrized KL divergence}
+#'     \item{"affine_invariant"}{Affine-invariant Riemannian distance}
+#'   }
+#'   
+#' @return The distance between the two distributions (non-negative scalar)
+#'
+#' @details
+#' This is the main entry point for computing distances between multivariate 
+#' normal distributions. The default LRT trace method provides excellent 
+#' performance for high-dimensional problems:
+#' 
+#' **Performance Guide:**
+#' - **p > 50**: Use default "lrt_trace" (50x faster than Wasserstein-2)
+#' - **p < 50**: "wasserstein2" for higher accuracy  
+#' - **Real-time**: Use default "lrt_trace"
+#' - **Information theory**: "fisher_rao" (slowest but theoretically optimal)
+#'
+#' @examples
+#' # Define two bivariate normal distributions
+#' mu1 <- c(0, 0)
+#' Sigma1 <- diag(2)
+#' mu2 <- c(1, 1) 
+#' Sigma2 <- matrix(c(2, 0.5, 0.5, 1), 2, 2)
+#' 
+#' # Default: fast LRT trace distance
+#' llmdist(mu1, Sigma1, mu2, Sigma2)
+#' 
+#' # Specify other methods
+#' llmdist(mu1, Sigma1, mu2, Sigma2, method = "wasserstein2")
+#' llmdist(mu1, Sigma1, mu2, Sigma2, method = "hellinger")
+#' 
+#' # High-dimensional example: LRT trace is much faster
+#' p <- 100
+#' mu1_hd <- rep(0, p)
+#' Sigma1_hd <- diag(p)
+#' mu2_hd <- rep(0.1, p)
+#' Sigma2_hd <- diag(p) + 0.1
+#' 
+#' # Fast computation (milliseconds)
+#' llmdist(mu1_hd, Sigma1_hd, mu2_hd, Sigma2_hd)
+#' 
+#' # Compare with slower methods
+#' llmdist(mu1_hd, Sigma1_hd, mu2_hd, Sigma2_hd, method = "wasserstein2")
+#' 
+#' @seealso 
+#' \code{\link{lrt_trace_distance}}, \code{\link{wasserstein2_distance}}, 
+#' \code{\link{fisher_rao_distance}}, \code{\link{compare_distances}}
+#'
+#' @export
+llmdist <- function(mu1, Sigma1, mu2, Sigma2, method = "lrt_trace") {
+  
+  # Validate method argument
+  valid_methods <- c("lrt_trace", "wasserstein2", "fisher_rao", "hellinger", 
+                     "bhattacharyya", "kl", "kl_sym", "affine_invariant")
+  
+  if (!method %in% valid_methods) {
+    stop("Invalid method. Choose from: ", paste(valid_methods, collapse = ", "))
+  }
+  
+  # Dispatch to the appropriate distance function
+  switch(method,
+    "lrt_trace" = lrt_trace_distance(mu1, Sigma1, mu2, Sigma2),
+    "wasserstein2" = wasserstein2_distance(mu1, Sigma1, mu2, Sigma2), 
+    "fisher_rao" = fisher_rao_distance(mu1, Sigma1, mu2, Sigma2),
+    "hellinger" = hellinger_distance(mu1, Sigma1, mu2, Sigma2),
+    "bhattacharyya" = bhattacharyya_distance(mu1, Sigma1, mu2, Sigma2),
+    "kl" = kl_divergence(mu1, Sigma1, mu2, Sigma2),
+    "kl_sym" = symmetrized_kl(mu1, Sigma1, mu2, Sigma2),
+    "affine_invariant" = affine_invariant_distance(mu1, Sigma1, mu2, Sigma2)
+  )
+}

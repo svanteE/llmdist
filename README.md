@@ -75,16 +75,18 @@ library(llmdist)
 mu1 <- c(0, 0)
 Sigma1 <- diag(2)
 
-mu2 <- c(2, 1)
+mu2 <- c(2, 1) 
 Sigma2 <- matrix(c(2, 0.5, 0.5, 1), 2, 2)
 
-# Compute individual distances
+# 🚀 RECOMMENDED: Use main llmdist() function (fast by default)
+llmdist(mu1, Sigma1, mu2, Sigma2)                    # Fast LRT trace distance
+llmdist(mu1, Sigma1, mu2, Sigma2, "wasserstein2")   # More precise but slower
+llmdist(mu1, Sigma1, mu2, Sigma2, "hellinger")      # Bounded [0,1] similarity
+
+# Alternative: Call specific distance functions directly  
+lrt_trace_distance(mu1, Sigma1, mu2, Sigma2)        # Same as default llmdist()
 wasserstein2_distance(mu1, Sigma1, mu2, Sigma2)
 hellinger_distance(mu1, Sigma1, mu2, Sigma2)
-bhattacharyya_distance(mu1, Sigma1, mu2, Sigma2)
-
-# For speed-critical applications, use LRT trace distance
-lrt_trace_distance(mu1, Sigma1, mu2, Sigma2)
 
 # Compare all distances at once
 compare_distances(mu1, Sigma1, mu2, Sigma2)
@@ -102,27 +104,31 @@ Sigma1 <- diag(p)
 mu2 <- rep(0.1, p) 
 Sigma2 <- diag(p) + 0.1
 
-# FASTEST: LRT trace distance (milliseconds)
-system.time(lrt_trace_distance(mu1, Sigma1, mu2, Sigma2))
+# 🚀 FASTEST: Default llmdist() uses LRT trace (milliseconds)
+system.time(llmdist(mu1, Sigma1, mu2, Sigma2))
 #> ~0.001 seconds ⚡
 
-# SLOWER: Wasserstein-2 (requires matrix square roots)  
-system.time(wasserstein2_distance(mu1, Sigma1, mu2, Sigma2))
-#> ~0.05 seconds 🐢
+# 🐢 SLOWER: Wasserstein-2 (requires matrix square roots)  
+system.time(llmdist(mu1, Sigma1, mu2, Sigma2, "wasserstein2"))
+#> ~0.05 seconds 
 
-# SLOWEST: Fisher-Rao (iterative optimization)
-system.time(fisher_rao_distance(mu1, Sigma1, mu2, Sigma2))
-#> ~2-10 seconds 🐌
+# 🐌 SLOWEST: Fisher-Rao (iterative optimization)
+system.time(llmdist(mu1, Sigma1, mu2, Sigma2, "fisher_rao"))
+#> ~2-10 seconds 
 ```
 
-**For p > 50 dimensions**: Use `lrt_trace_distance()` for ~50x speedup over Wasserstein-2
+**For p > 50 dimensions**: Default `llmdist()` provides ~50x speedup over Wasserstein-2
 ```
 
 ## Key Functions
 
+### **🎯 Main Entry Point** 
+
+- `llmdist()` - **RECOMMENDED**: Main distance function with fast LRT trace default
+
 ### **Speed-Optimized Distances** ⚡
 
-- `lrt_trace_distance()` - **FASTEST**: Efficient approximation to Wasserstein-2 
+- `lrt_trace_distance()` - **FASTEST**: Efficient approximation to Wasserstein-2
 - `wasserstein2_distance()` - Optimal transport (accurate but requires matrix square roots)
 - `hellinger_distance()` - Bounded similarity measure
 - `bhattacharyya_distance()` - Pattern recognition, classification  
@@ -141,26 +147,30 @@ system.time(fisher_rao_distance(mu1, Sigma1, mu2, Sigma2))
 
 ## Which Distance Should I Use?
 
-| Application | Recommended Distance | Why |
-|-------------|---------------------|-----|
-| **🚀 High-dimensional (p > 50)** | **LRT Trace** | **50x faster than Wasserstein-2, good approximation** |
-| **🚀 Large-scale ML pipelines** | **LRT Trace** | **Minimal computational overhead** |
-| **🚀 Real-time applications** | **LRT Trace** | **Sub-millisecond computation** |
-| **Machine Learning** | Wasserstein-2 | Fast closed form, meaningful interpolation |
-| **LLM embeddings** | Wasserstein-2 or LRT Trace | Choose based on speed vs accuracy needs |
-| **Model merging/interpolation** | Wasserstein-2 | Optimal transport interpretation |
-| **Classification** | Bhattacharyya | Related to Bayes error |
-| **Bounded similarity** | Hellinger | Normalized [0,1] |
-| **Information theory** | Fisher-Rao | Theoretically optimal for statistical inference |
-| **Variational inference** | KL divergence | Natural for VAEs |
-| **Covariance smoothing** | Affine-invariant | SPD matrix operations |
+| Application | Recommended Code | Why |
+|-------------|------------------|-----|
+| **🚀 High-dimensional (p > 50)** | **`llmdist(mu1, S1, mu2, S2)`** | **Default LRT trace: 50x faster** |
+| **🚀 Large-scale ML pipelines** | **`llmdist(mu1, S1, mu2, S2)`** | **Minimal computational overhead** |
+| **🚀 Real-time applications** | **`llmdist(mu1, S1, mu2, S2)`** | **Sub-millisecond computation** |
+| **Machine Learning** | `llmdist(mu1, S1, mu2, S2, "wasserstein2")` | Optimal transport, meaningful interpolation |
+| **LLM embeddings** | `llmdist()` or `"wasserstein2"` | Choose based on speed vs accuracy |
+| **Model merging/interpolation** | `llmdist(..., "wasserstein2")` | Optimal transport interpretation |
+| **Classification** | `llmdist(..., "bhattacharyya")` | Related to Bayes error |
+| **Bounded similarity** | `llmdist(..., "hellinger")` | Normalized [0,1] |
+| **Information theory** | `llmdist(..., "fisher_rao")` | Theoretically optimal (slowest) |
+| **Variational inference** | `llmdist(..., "kl")` | Natural for VAEs |
 
-### Performance Comparison
-
+### 🎯 **Quick Decision Guide:**
 ```r
-# Example: Compare computation time
-system.time(wasserstein2_distance(mu1, Sigma1, mu2, Sigma2))
-# Typical: < 0.01 seconds
+# 90% of users: Just use the default!
+llmdist(mu1, Sigma1, mu2, Sigma2)
+
+# Need higher precision and p < 50?  
+llmdist(mu1, Sigma1, mu2, Sigma2, "wasserstein2")
+
+# Need bounded similarity measure?
+llmdist(mu1, Sigma1, mu2, Sigma2, "hellinger")
+```
 
 system.time(fisher_rao_distance(mu1, Sigma1, mu2, Sigma2))
 # Typical: 0.1-1 seconds (requires optimization)
