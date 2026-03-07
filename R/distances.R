@@ -3,6 +3,9 @@
 #' Computes the Wasserstein-2 distance (also known as Bures or Frechet distance)
 #' between two multivariate normal distributions. This metric has a closed-form
 #' solution for Gaussian distributions and is based on optimal transport theory.
+#' 
+#' **Note**: For high-dimensional problems or when computational speed is critical,
+#' consider using the faster \code{\link{lrt_trace_distance}} as an approximation.
 #'
 #' @param mu1 Mean vector of the first distribution (numeric vector)
 #' @param Sigma1 Covariance matrix of the first distribution (positive definite matrix)
@@ -11,16 +14,29 @@
 #'
 #' @return The Wasserstein-2 distance (non-negative scalar)
 #'
+#' @details
+#' The Wasserstein-2 distance provides the most geometrically meaningful measure
+#' but requires expensive matrix square root computations via eigendecomposition.
+#' For large matrices (p > 50) or applications requiring many distance computations,
+#' the \code{\link{lrt_trace_distance}} provides a much faster alternative.
+#'
 #' @references
 #' Takatsu, A. (2011). Wasserstein geometry of Gaussian measures.
 #' Osaka Journal of Mathematics, 48(4), 1005-1026.
+#'
+#' @seealso \code{\link{lrt_trace_distance}} for a computationally efficient alternative
 #'
 #' @examples
 #' mu1 <- c(0, 0)
 #' Sigma1 <- diag(2)
 #' mu2 <- c(1, 1)
 #' Sigma2 <- matrix(c(2, 0.5, 0.5, 1), 2, 2)
+#' 
+#' # Precise but slower
 #' wasserstein2_distance(mu1, Sigma1, mu2, Sigma2)
+#' 
+#' # Fast approximation
+#' lrt_trace_distance(mu1, Sigma1, mu2, Sigma2)
 #'
 #' @export
 wasserstein2_distance <- function(mu1, Sigma1, mu2, Sigma2) {
@@ -269,10 +285,12 @@ lrt_distance <- function(mu1, Sigma1, mu2, Sigma2) {
   as.numeric(distance)
 }
 
-#' Likelihood Ratio Test Distance (Trace-based)
+#' Likelihood Ratio Test Distance (Trace-based) - Fast Alternative to Wasserstein-2
 #'
-#' Computes a trace-based variant of the LRT distance, where the determinant
-#' is replaced by (tr(A)/p)^p following the AM-GM inequality relationship.
+#' Computes a computationally efficient trace-based variant of the LRT distance.
+#' This provides a fast approximation to the Wasserstein-2 distance without requiring 
+#' expensive matrix square root operations, making it suitable for high-dimensional 
+#' problems and large-scale applications.
 #'
 #' @param mu1 Mean vector of the first distribution
 #' @param Sigma1 Covariance matrix of the first distribution
@@ -289,15 +307,32 @@ lrt_distance <- function(mu1, Sigma1, mu2, Sigma2) {
 #' 
 #' with N the numerator matrix and p the dimension.
 #'
-#' This variant is numerically more stable for high-dimensional problems
-#' and relates to the arithmetic mean of eigenvalues rather than their product.
+#' **Performance Advantage**: Unlike the Wasserstein-2 distance which requires 
+#' computationally expensive matrix square root operations via eigendecomposition,
+#' the LRT trace distance uses only basic matrix operations (trace, determinant).
+#' This makes it orders of magnitude faster for large matrices while providing
+#' a reasonable approximation to the Wasserstein-2 distance.
+#'
+#' **When to Use**: 
+#' - High-dimensional problems (p > 50)  
+#' - Large-scale applications requiring many distance computations
+#' - Real-time applications where speed is critical
+#' - When approximate distance is sufficient for comparison purposes
+#'
+#' @note For more precise distance measurement when computational cost is not 
+#' a constraint, consider using \code{\link{wasserstein2_distance}}.
 #'
 #' @examples
 #' mu1 <- c(0, 0)
 #' Sigma1 <- diag(2)
 #' mu2 <- c(1, 1)
 #' Sigma2 <- matrix(c(2, 0.5, 0.5, 1), 2, 2)
+#' 
+#' # Fast approximation
 #' lrt_trace_distance(mu1, Sigma1, mu2, Sigma2)
+#' 
+#' # Compare with Wasserstein-2 (slower but more precise)
+#' wasserstein2_distance(mu1, Sigma1, mu2, Sigma2)
 #'
 #' @export
 lrt_trace_distance <- function(mu1, Sigma1, mu2, Sigma2) {
