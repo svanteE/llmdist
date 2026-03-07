@@ -92,9 +92,9 @@ hellinger_distance(mu1, Sigma1, mu2, Sigma2)
 compare_distances(mu1, Sigma1, mu2, Sigma2)
 ```
 
-### **Performance Comparison: Speed vs Accuracy**
+### **Performance Comparison: Speed vs Interpretation**
 
-For high-dimensional problems, choose based on your priority:
+Different methods measure different geometric properties. Choose based on speed needs and interpretation:
 
 ```r
 # High-dimensional example (100D)
@@ -117,7 +117,7 @@ system.time(llmdist(mu1, Sigma1, mu2, Sigma2, "fisher_rao"))
 #> ~2-10 seconds 
 ```
 
-**For p > 50 dimensions**: Default `llmdist()` provides ~50x speedup over Wasserstein-2
+**Note**: In high dimensions, LRT trace and Wasserstein-2 often give similar *ordering* of distances, but they measure different geometric concepts.
 ```
 
 ## Key Functions
@@ -149,12 +149,12 @@ system.time(llmdist(mu1, Sigma1, mu2, Sigma2, "fisher_rao"))
 
 | Application | Recommended Code | Why |
 |-------------|------------------|-----|
-| **🚀 High-dimensional (p > 50)** | **`llmdist(mu1, S1, mu2, S2)`** | **Default LRT trace: 50x faster** |
+| **🚀 High-dimensional (p > 50)** | **`llmdist(mu1, S1, mu2, S2)`** | **Default LRT trace: 50x faster with similar ordering** |
 | **🚀 Large-scale ML pipelines** | **`llmdist(mu1, S1, mu2, S2)`** | **Minimal computational overhead** |
 | **🚀 Real-time applications** | **`llmdist(mu1, S1, mu2, S2)`** | **Sub-millisecond computation** |
-| **Machine Learning** | `llmdist(mu1, S1, mu2, S2, "wasserstein2")` | Optimal transport, meaningful interpolation |
-| **LLM embeddings** | `llmdist()` or `"wasserstein2"` | Choose based on speed vs accuracy |
-| **Model merging/interpolation** | `llmdist(..., "wasserstein2")` | Optimal transport interpretation |
+| **Optimal transport interpretation** | `llmdist(mu1, S1, mu2, S2, "wasserstein2")` | Exact transport cost (slower) |
+| **LLM embeddings** | `llmdist()` or `"wasserstein2"` | Choose based on speed vs transport meaning |
+| **Model merging/interpolation** | `llmdist(..., "wasserstein2")` | Optimal transport interpretation needed |
 | **Classification** | `llmdist(..., "bhattacharyya")` | Related to Bayes error |
 | **Bounded similarity** | `llmdist(..., "hellinger")` | Normalized [0,1] |
 | **Information theory** | `llmdist(..., "fisher_rao")` | Theoretically optimal (slowest) |
@@ -162,10 +162,10 @@ system.time(llmdist(mu1, Sigma1, mu2, Sigma2, "fisher_rao"))
 
 ### 🎯 **Quick Decision Guide:**
 ```r
-# 90% of users: Just use the default!
+# 90% of users: Just use the fast default!
 llmdist(mu1, Sigma1, mu2, Sigma2)
 
-# Need higher precision and p < 50?  
+# Need optimal transport interpretation?  
 llmdist(mu1, Sigma1, mu2, Sigma2, "wasserstein2")
 
 # Need bounded similarity measure?

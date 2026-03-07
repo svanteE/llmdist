@@ -4,8 +4,9 @@
 #' between two multivariate normal distributions. This metric has a closed-form
 #' solution for Gaussian distributions and is based on optimal transport theory.
 #' 
-#' **Note**: For high-dimensional problems or when computational speed is critical,
-#' consider using the faster \code{\link{lrt_trace_distance}} as an approximation.
+#' **Performance Note**: For high-dimensional problems or when computational speed is critical,
+#' consider using the faster \code{\link{lrt_trace_distance}} which provides similar 
+#' distance-ordering properties with much lower computational cost.
 #'
 #' @param mu1 Mean vector of the first distribution (numeric vector)
 #' @param Sigma1 Covariance matrix of the first distribution (positive definite matrix)
@@ -15,10 +16,10 @@
 #' @return The Wasserstein-2 distance (non-negative scalar)
 #'
 #' @details
-#' The Wasserstein-2 distance provides the most geometrically meaningful measure
-#' but requires expensive matrix square root computations via eigendecomposition.
-#' For large matrices (p > 50) or applications requiring many distance computations,
-#' the \code{\link{lrt_trace_distance}} provides a much faster alternative.
+#' The Wasserstein-2 distance measures the optimal transport cost between distributions
+#' and requires matrix square root computations via eigendecomposition. For large matrices 
+#' (p > 50) or applications requiring many distance computations, the 
+#' \code{\link{lrt_trace_distance}} provides much faster computation with similar ordering properties.
 #'
 #' @references
 #' Takatsu, A. (2011). Wasserstein geometry of Gaussian measures.
@@ -32,10 +33,10 @@
 #' mu2 <- c(1, 1)
 #' Sigma2 <- matrix(c(2, 0.5, 0.5, 1), 2, 2)
 #' 
-#' # Precise but slower
+#' # Optimal transport distance (exact but slower)
 #' wasserstein2_distance(mu1, Sigma1, mu2, Sigma2)
 #' 
-#' # Fast approximation
+#' # Fast alternative with similar ordering properties
 #' lrt_trace_distance(mu1, Sigma1, mu2, Sigma2)
 #'
 #' @export
@@ -288,9 +289,9 @@ lrt_distance <- function(mu1, Sigma1, mu2, Sigma2) {
 #' Likelihood Ratio Test Distance (Trace-based) - Fast Alternative to Wasserstein-2
 #'
 #' Computes a computationally efficient trace-based variant of the LRT distance.
-#' This provides a fast approximation to the Wasserstein-2 distance without requiring 
-#' expensive matrix square root operations, making it suitable for high-dimensional 
-#' problems and large-scale applications.
+#' While measuring different geometric properties than Wasserstein-2, it provides
+#' similar distance ordering with much lower computational cost, making it ideal 
+#' for high-dimensional problems and large-scale applications.
 #'
 #' @param mu1 Mean vector of the first distribution
 #' @param Sigma1 Covariance matrix of the first distribution
@@ -307,20 +308,22 @@ lrt_distance <- function(mu1, Sigma1, mu2, Sigma2) {
 #' 
 #' with N the numerator matrix and p the dimension.
 #'
-#' **Performance Advantage**: Unlike the Wasserstein-2 distance which requires 
-#' computationally expensive matrix square root operations via eigendecomposition,
-#' the LRT trace distance uses only basic matrix operations (trace, determinant).
-#' This makes it orders of magnitude faster for large matrices while providing
-#' a reasonable approximation to the Wasserstein-2 distance.
+#' **Performance Advantage**: Uses only basic matrix operations (trace) instead 
+#' of expensive matrix square roots required by Wasserstein-2. This makes it 
+#' orders of magnitude faster for large matrices.
+#'
+#' **Geometric Interpretation**: Based on likelihood ratio test concepts with 
+#' trace-based pseudodeterminants. In high dimensions, provides similar distance 
+#' ordering properties as Wasserstein-2 but measures different geometric aspects.
 #'
 #' **When to Use**: 
 #' - High-dimensional problems (p > 50)  
 #' - Large-scale applications requiring many distance computations
 #' - Real-time applications where speed is critical
-#' - When approximate distance is sufficient for comparison purposes
+#' - When ordering/ranking distances is more important than exact values
 #'
-#' @note For more precise distance measurement when computational cost is not 
-#' a constraint, consider using \code{\link{wasserstein2_distance}}.
+#' @note For optimal transport interpretation, use \code{\link{wasserstein2_distance}}.
+#' For likelihood ratio concepts and maximum speed, use this function.
 #'
 #' @examples
 #' mu1 <- c(0, 0)
@@ -328,10 +331,10 @@ lrt_distance <- function(mu1, Sigma1, mu2, Sigma2) {
 #' mu2 <- c(1, 1)
 #' Sigma2 <- matrix(c(2, 0.5, 0.5, 1), 2, 2)
 #' 
-#' # Fast approximation
+#' # Fast computation with similar ordering properties 
 #' lrt_trace_distance(mu1, Sigma1, mu2, Sigma2)
 #' 
-#' # Compare with Wasserstein-2 (slower but more precise)
+#' # Compare with Wasserstein-2 (slower but different geometric meaning)
 #' wasserstein2_distance(mu1, Sigma1, mu2, Sigma2)
 #'
 #' @export
