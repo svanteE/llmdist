@@ -1,4 +1,4 @@
-Package: mvndist
+Package: llmdist
 Type: Package
 Title: Distance Measures Between Multivariate Normal Distributions
 Version: 0.1.0

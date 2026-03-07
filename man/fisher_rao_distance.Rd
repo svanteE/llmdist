@@ -10,7 +10,8 @@ fisher_rao_distance(
   mu2,
   Sigma2,
   method = "BFGS",
-  control = list()
+  control = list(),
+  returnA = FALSE
 )
 }
 \arguments{
@@ -31,9 +32,11 @@ The Fisher-Rao distance (non-negative scalar), or NA if computation fails
 }
 \description{
 Computes the Fisher-Rao distance using the geodesic solution method of Eriksen (1987).
-This method solves the optimization problem f(y) = tr(C(y)^2) = 0 to find the exact
-geodesic for the Fisher information metric (Skovgaard 1984), then computes the distance
-as the path length. For univariate distributions, uses the exact closed-form solution.
+When the canonical parameter de is an eigenvector of the precision matrix De
+(which includes all univariate cases), uses the closed-form formula (7) for
+efficient computation. Otherwise, solves the optimization problem f(y) = tr(C(y)^2) = 0
+to find the exact geodesic for the Fisher information metric (Skovgaard 1984),
+then computes the distance as the path length.
 }
 \examples{
 # Bivariate example
@@ -44,7 +47,7 @@ Sigma2 <- diag(2)
 d <- fisher_rao_distance(mu1, Sigma1, mu2, Sigma2)
 print(d)
 
-# Univariate example (uses exact formula)
+# Univariate example (uses eigenvector formula)
 d_uni <- fisher_rao_distance(0, matrix(1), 2, matrix(4))
 print(d_uni)
 
@@ -56,6 +59,14 @@ normal model. Scandinavian Journal of Statistics, 11(4), 211-223.
 Eriksen, P. S. (1987). Geodesics connected with the Fisher metric on
 the multivariate normal manifold. Proceedings of the GST Workshop.
 
+When means are equal (mu1 = mu2), the Fisher-Rao distance reduces to a
+geodesic on the manifold of positive definite matrices (the covariance
+component only). This is the affine-invariant distance:
+
+Moakher, M. (2005). A differential geometric approach to the geometric
+mean of symmetric positive-definite matrices. SIAM Journal on Matrix
+Analysis and Applications, 26(3), 735-747.
+
 For detailed theory and implementation, see the included paper:
-\code{system.file("fisher_rao_geodesic.pdf", package = "mvndist")}
+\code{system.file("fisher_rao_geodesic.pdf", package = "llmdist")}
 }

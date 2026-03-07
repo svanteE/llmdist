@@ -174,3 +174,194 @@ affine_invariant_distance <- function(mu1, Sigma1, mu2, Sigma2) {
   
   sqrt(mu_dist_sq + Sigma_dist_sq)
 }
+
+#' Likelihood Ratio Test (LRT) Distance
+#'
+#' Computes a distance inspired by the likelihood ratio test statistic for
+#' multivariate normal distributions. For univariate normals, this distance
+#' is equivalent to the Fisher-Rao distance when applied to maximum likelihood
+#' estimates from samples of equal size.
+#'
+#' @param mu1 Mean vector of the first distribution
+#' @param Sigma1 Covariance matrix of the first distribution
+#' @param mu2 Mean vector of the second distribution
+#' @param Sigma2 Covariance matrix of the second distribution
+#'
+#' @return The LRT distance (non-negative scalar)
+#'
+#' @details
+#' The LRT distance is defined as:
+#' \deqn{D_{LRT} = \frac{\sqrt{2}}{2} \text{acosh}(2 \cdot LRTMV - 1)}
+#' where
+#' \deqn{LRTMV = \frac{|\frac{1}{2}(\Sigma_1 + \Sigma_2) + \frac{1}{2}(\mu_1-\mu_2)(\mu_1-\mu_2)^T|^2}{|\Sigma_1||\Sigma_2|}}
+#'
+#' For univariate distributions with sample size n, the relationship to the
+#' Fisher-Rao distance is:
+#' \deqn{D_{Fisher-Rao} = \frac{\sqrt{2}}{2} \text{acosh}(2 \cdot LRT^{-2/n} - 1)}
+#'
+#' @references
+#' Eriksen, P. S. (1987). Geodesics connected with the Fisher metric on
+#' the multivariate normal manifold. Proceedings of the GST Workshop.
+#'
+#' @examples
+#' mu1 <- c(0, 0)
+#' Sigma1 <- diag(2)
+#' mu2 <- c(1, 1)
+#' Sigma2 <- matrix(c(2, 0.5, 0.5, 1), 2, 2)
+#' lrt_distance(mu1, Sigma1, mu2, Sigma2)
+#'
+#' @export
+lrt_distance <- function(mu1, Sigma1, mu2, Sigma2) {
+  # Ensure matrices and vectors are properly formatted
+  mu1 <- as.numeric(mu1)
+  mu2 <- as.numeric(mu2)
+  Sigma1 <- as.matrix(Sigma1)
+  Sigma2 <- as.matrix(Sigma2)
+  
+  p <- length(mu1)
+  
+  # Handle univariate case (p=1)
+  if (p == 1) {
+    # For scalars, determinant = the value itself
+    det_S1 <- as.numeric(Sigma1)
+    det_S2 <- as.numeric(Sigma2)
+    
+    # Compute LRTMV for univariate case
+    mu_diff <- mu1 - mu2
+    Sigma_avg <- 0.5 * (det_S1 + det_S2)
+    numerator <- Sigma_avg + 0.25 * mu_diff^2
+    
+    LRTMV <- (numerator^2) / (det_S1 * det_S2)
+    
+    arg <- 2 * LRTMV - 1
+    if (!is.finite(arg) || arg < 1) arg <- 1
+    
+    distance <- (sqrt(2) / 2) * acosh(arg)
+    return(as.numeric(distance))
+  }
+  
+  # Multivariate case (p > 1)
+  # Compute the mean difference outer product
+  mu_diff <- as.matrix(mu1 - mu2)
+  mu_outer <- mu_diff %*% t(mu_diff)
+  
+  # Compute LRTMV statistic using determinants
+  Sigma_avg <- 0.5 * (Sigma1 + Sigma2)
+  numerator_matrix <- as.matrix(Sigma_avg + 0.25 * mu_outer)
+  
+  # Ensure symmetry
+  numerator_matrix <- 0.5 * (numerator_matrix + t(numerator_matrix))
+  
+  # Compute determinants
+  det_num <- det(numerator_matrix)
+  det_S1 <- det(Sigma1)
+  det_S2 <- det(Sigma2)
+  
+  # LRTMV = |numerator|^2 / (|Sigma1||Sigma2|)
+  LRTMV <- (det_num^2) / (det_S1 * det_S2)
+  
+  # Compute acosh argument and clamp to domain [1, inf) to avoid numerical issues
+  arg <- 2 * LRTMV - 1
+  if (!is.finite(arg) || arg < 1) arg <- 1  # clamp to avoid acosh domain error
+  
+  distance <- (sqrt(2) / 2) * acosh(arg)
+  
+  as.numeric(distance)
+}
+
+#' Likelihood Ratio Test Distance (Trace-based)
+#'
+#' Computes a trace-based variant of the LRT distance, where the determinant
+#' is replaced by (tr(A)/p)^p following the AM-GM inequality relationship.
+#'
+#' @param mu1 Mean vector of the first distribution
+#' @param Sigma1 Covariance matrix of the first distribution
+#' @param mu2 Mean vector of the second distribution
+#' @param Sigma2 Covariance matrix of the second distribution
+#'
+#' @return The LRT trace-based distance (non-negative scalar)
+#'
+#' @details
+#' The LRT trace distance is defined as:
+#' \deqn{D_{LRT,tr} = \frac{\sqrt{2}}{2} \text{acosh}(2 \cdot LRTMV_{tr} - 1)}
+#' where
+#' \deqn{LRTMV_{tr} = \frac{((tr(N)/p)^p)^2}{(tr(\Sigma_1)/p)^p \cdot (tr(\Sigma_2)/p)^p}}
+#' 
+#' with N the numerator matrix and p the dimension.
+#'
+#' This variant is numerically more stable for high-dimensional problems
+#' and relates to the arithmetic mean of eigenvalues rather than their product.
+#'
+#' @examples
+#' mu1 <- c(0, 0)
+#' Sigma1 <- diag(2)
+#' mu2 <- c(1, 1)
+#' Sigma2 <- matrix(c(2, 0.5, 0.5, 1), 2, 2)
+#' lrt_trace_distance(mu1, Sigma1, mu2, Sigma2)
+#'
+#' @export
+lrt_trace_distance <- function(mu1, Sigma1, mu2, Sigma2) {
+  # Ensure matrices and vectors are properly formatted
+  mu1 <- as.numeric(mu1)
+  mu2 <- as.numeric(mu2)
+  Sigma1 <- as.matrix(Sigma1)
+  Sigma2 <- as.matrix(Sigma2)
+  
+  p <- length(mu1)
+  
+  # Handle univariate case (p=1)
+  if (p == 1) {
+    # For p=1, (tr(A)/1)^1 = tr(A) = A itself
+    S1_scalar <- as.numeric(Sigma1)
+    S2_scalar <- as.numeric(Sigma2)
+    
+    # Same as determinant for univariate
+    mu_diff <- mu1 - mu2
+    Sigma_avg <- 0.5 * (S1_scalar + S2_scalar)
+    numerator <- Sigma_avg + 0.25 * mu_diff^2
+    
+    LRTMV_tr <- (numerator^2) / (S1_scalar * S2_scalar)
+    
+    arg <- 2 * LRTMV_tr - 1
+    if (!is.finite(arg) || arg < 1) arg <- 1
+    
+    distance <- (sqrt(2) / 2) * acosh(arg)
+    return(as.numeric(distance))
+  }
+  
+  # Multivariate case (p > 1)
+  # Compute the mean difference outer product
+  mu_diff <- as.matrix(mu1 - mu2)
+  mu_outer <- mu_diff %*% t(mu_diff)
+  
+  # Compute numerator matrix
+  Sigma_avg <- 0.5 * (Sigma1 + Sigma2)
+  numerator_matrix <- as.matrix(Sigma_avg + 0.25 * mu_outer)
+  
+  # Ensure symmetry
+  numerator_matrix <- 0.5 * (numerator_matrix + t(numerator_matrix))
+  
+  # Compute trace-based pseudodeterminants: (tr(A)/p)^p
+  tr_num <- sum(diag(numerator_matrix))
+  tr_S1 <- sum(diag(Sigma1))
+  tr_S2 <- sum(diag(Sigma2))
+  
+  # LRTMV_tr = ((tr_num/p)^p)^2 / ((tr_S1/p)^p * (tr_S2/p)^p)
+  pseudodet_num <- (tr_num / p)^p
+  pseudodet_S1 <- (tr_S1 / p)^p
+  pseudodet_S2 <- (tr_S2 / p)^p
+  
+  LRTMV_tr <- (pseudodet_num^2) / (pseudodet_S1 * pseudodet_S2)
+  
+  # Compute acosh argument and clamp to domain [1, inf)
+  arg <- 2 * LRTMV_tr - 1
+  if (!is.finite(arg) || arg < 1) arg <- 1
+  
+  distance <- (sqrt(2) / 2) * acosh(arg)
+  #if(-distance+fisher_rao_distance(mu1, Sigma1, mu2, Sigma2)>1.5){
+  #  assign("zzztmp",list(mu1, Sigma1, mu2, Sigma2),envir=.GlobalEnv)
+  #  stop("nullert")
+  #}
+  
+  as.numeric(distance)
+}

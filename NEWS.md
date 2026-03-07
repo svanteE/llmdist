@@ -1,4 +1,4 @@
-# mvndist 0.1.0
+# llmdist 0.1.0
 
 ## Initial Release
 

@@ -1,5 +1,5 @@
 library(testthat)
-library(mvndist)
+library(llmdist)
 
 test_that("Wasserstein-2 distance works", {
   mu1 <- c(0, 0)

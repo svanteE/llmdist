@@ -1,0 +1,170 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+
+\title{Fisher-Rao Geodesic: Theory and Implementation}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Overview}
+
+The Fisher-Rao distance is computed using the geodesic method of Eriksen (1987) on the manifold of multivariate normal distributions equipped with the Fisher information metric (Skovgaard 1984).
+
+\section{Canonical Parameters}
+
+Two multivariate normal distributions $N(\boldsymbol{\mu}_1, \boldsymbol{\Sigma}_1)$ and $N(\boldsymbol{\mu}_2, \boldsymbol{\Sigma}_2)$ are transformed to canonical parameters relative to $(0, I)$ via:
+\[
+\boldsymbol{\mu}_{\text{trans}} = U(\boldsymbol{\mu}_2 - \boldsymbol{\mu}_1), \quad 
+\boldsymbol{\Sigma}_{\text{trans}} = U\boldsymbol{\Sigma}_2 U^T
+\]
+where $U$ is the upper triangular Cholesky factor of $\boldsymbol{\Sigma}_1^{-1}$.
+
+The canonical parameters are:
+\[
+D_e = \boldsymbol{\Sigma}_{\text{trans}}^{-1}, \quad 
+\mathbf{d}_e = D_e \boldsymbol{\mu}_{\text{trans}}
+\]
+
+\section{Geodesic Computation: General Case}
+
+\subsection{Diagonalization}
+
+Diagonalize the precision matrix $D_e$ via eigendecomposition:
+\[
+D_e = V D_e^{\text{diag}} V^T
+\]
+where $V$ contains eigenvectors and $D_e^{\text{diag}} = \text{diag}(\lambda_1, \ldots, \lambda_p)$ contains eigenvalues.
+
+Transform the canonical parameters:
+\[
+\mathbf{d}_{\text{rotated}} = V^T \mathbf{d}_e, \quad 
+D = \sqrt{\text{diag}(D_e^{\text{diag}})}, \quad 
+\mathbf{d} = D^{-1} \mathbf{d}_{\text{rotated}}
+\]
+
+\subsection{Block Structure of $A(y)$}
+
+The matrix $A(y) = \log(\Lambda_0(y))$ has a block structure:
+\[
+A(y) = \begin{bmatrix}
+B(y) & \mathbf{x}(y) & C(y) \\
+\mathbf{x}(y)^T & e(y) & \mathbf{z}(y)^T \\
+C(y)^T & \mathbf{z}(y) & E(y)
+\end{bmatrix}
+\]
+where:
+\begin{itemize}
+  \item $B(y)$ is $p \times p$
+  \item $\mathbf{x}(y)$ is $p \times 1$
+  \item $C(y)$ is $p \times p$
+  \item $e(y)$ is scalar
+  \item $\mathbf{z}(y)$ is $p \times 1$
+  \item $E(y)$ is $p \times p$
+\end{itemize}
+
+\subsection{Optimization Objective}
+
+The geodesic is found by minimizing:
+\begin{equation}
+f(y) = \text{tr}(C(y)^2) + \text{tr}((B(y) + E(y))^2) + \sum(\mathbf{x}(y) + \mathbf{z}(y))^2 + e(y)^2
+\label{eq:objective}
+\end{equation}
+
+At the optimum $y^*$, the matrix $A(y^*)$ satisfies the geodesic constraints:
+\begin{align}
+C(y^*) &= 0 \quad \text{(off-diagonal block vanishes)} \\
+e(y^*) &= 0 \quad \text{(middle scalar vanishes)} \\
+\mathbf{z}(y^*) &= -\mathbf{x}(y^*) \quad \text{(lower-left couples to upper-right)} \\
+E(y^*) &= -B(y^*) \quad \text{(lower-right is negative of upper-left)}
+\end{align}
+
+These constraints enforce the block structure:
+\[
+A(y^*) = \begin{bmatrix}
+B & \mathbf{x} & 0 \\
+\mathbf{x}^T & 0 & -\mathbf{x}^T \\
+0 & -\mathbf{x} & -B
+\end{bmatrix}
+\]
+
+\subsection{Distance Computation}
+
+The Fisher-Rao distance is computed from the optimal $A$ matrix as:
+\[
+D_0 = \frac{1}{2}\sqrt{\text{tr}(A(y^*)^2)}
+\]
+
+\section{Eigenvector Case}
+
+When the canonical parameter $\mathbf{d}_e$ is an eigenvector of $D_e$ (which includes all univariate cases $p=1$), the geodesic computation simplifies to a closed-form formula.
+
+Given:
+\[
+D_e \mathbf{d}_e = \lambda \mathbf{d}_e
+\]
+
+Define the mean parameter $\boldsymbol{\mu} = D_e^{-1} \mathbf{d}_e$ and $\tau = \boldsymbol{\mu}^T \mathbf{d}_e$.
+
+Construct $\Lambda_0$ with blocks:
+\begin{align}
+D_e &= \text{precision matrix} \\
+\mathbf{d}_e &= \text{canonical mean parameter} \\
+\boldsymbol{\Phi}_0 &= -\frac{1}{2}\mathbf{d}_e \boldsymbol{\mu}^T \\
+\boldsymbol{\gamma}_0 &= -\left(1 + \frac{\tau}{2}\right) \boldsymbol{\mu} \\
+\boldsymbol{\Gamma}_0 &= D_e^{-1} + \left(1 + \frac{\tau}{4}\right) \boldsymbol{\mu} \boldsymbol{\mu}^T
+\end{align}
+
+Then:
+\[
+\Lambda_0 = \begin{bmatrix}
+D_e & \mathbf{d}_e & \boldsymbol{\Phi}_0 \\
+\mathbf{d}_e^T & 1 + \tau & \boldsymbol{\gamma}_0^T \\
+\boldsymbol{\Phi}_0^T & \boldsymbol{\gamma}_0 & \boldsymbol{\Gamma}_0
+\end{bmatrix}
+\]
+
+Compute $A = \log(\Lambda_0)$ and the distance:
+\[
+D_0 = \frac{1}{2}\sqrt{\text{tr}(A^2)}
+\]
+
+\section{Implementation Notes}
+
+\subsection{Coordinate Transformations}
+
+The implementation uses an orthogonal similarity transformation to rotate between spaces:
+\[
+S = \text{block-diag}(V, 1, V)
+\]
+
+The relationship between rotated and canonical coordinates is:
+\[
+\Lambda_{\text{canonical}} = S \Lambda_{\text{rotated}} S^T
+\]
+
+This ensures that logarithmic and exponential operations preserve the block structure across coordinate systems.
+
+\subsection{Multi-Start Optimization}
+
+To avoid poor local minima, the optimization is run multiple times with different random initializations. Convergence is checked and warnings are issued if $f(y)$ does not reach $< 10^{-4}$.
+
+\subsection{Ill-Conditioning}
+
+The computation detects ill-conditioned precision matrices ($\kappa(D_e) > 10^{10}$) and issues warnings, as these lead to numerical instability in the geodesic computation.
+
+\section{References}
+
+\begin{itemize}
+  \item Skovgaard, L. T. (1984). A Riemannian geometry of the multivariate normal model. \textit{Scandinavian Journal of Statistics}, 11(4), 211--223.
+  
+  \item Eriksen, P. S. (1987). Geodesics connected with the Fisher metric on the multivariate normal manifold. Proceedings of the GST Workshop.
+  
+  \item Moakher, M. (2005). A differential geometric approach to the geometric mean of symmetric positive-definite matrices. \textit{SIAM Journal on Matrix Analysis and Applications}, 26(3), 735--747.
+\end{itemize}
+
+\end{document}

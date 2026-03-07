@@ -1,4 +1,4 @@
 library(testthat)
-library(mvndist)
+library(llmdist)
 
-test_check("mvndist")
+test_check("llmdist")

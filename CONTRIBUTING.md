@@ -1,6 +1,6 @@
-# Contributing to mvndist
+# Contributing to llmdist
 
-Thank you for considering contributing to mvndist! 
+Thank you for considering contributing to llmdist! 
 
 ## How to Contribute
 

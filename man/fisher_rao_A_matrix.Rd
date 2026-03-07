@@ -72,5 +72,5 @@ Eriksen, P. S. (1987). Geodesics connected with the Fisher metric on
 the multivariate normal manifold. Proceedings of the GST Workshop.
 
 For detailed theory and implementation, see the included paper:
-\code{system.file("fisher_rao_geodesic.pdf", package = "mvndist")}
+\code{system.file("fisher_rao_geodesic.pdf", package = "llmdist")}
 }

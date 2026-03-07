@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Set working directory to package root
-setwd("c:/Users/svante/OneDrive - Aalborg Universitet/geodesic/mvndist")
+setwd("c:/Users/svante/OneDrive - Aalborg Universitet/geodesic/llmdist")
 
 # Load required packages quietly
 suppressMessages({

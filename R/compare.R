@@ -26,7 +26,9 @@ compare_distances <- function(mu1, Sigma1, mu2, Sigma2, include_fisher = FALSE) 
     Hellinger = hellinger_distance(mu1, Sigma1, mu2, Sigma2),
     Bhattacharyya = bhattacharyya_distance(mu1, Sigma1, mu2, Sigma2),
     KL_symmetrized = symmetrized_kl(mu1, Sigma1, mu2, Sigma2),
-    Affine_Invariant = affine_invariant_distance(mu1, Sigma1, mu2, Sigma2)
+    Affine_Invariant = affine_invariant_distance(mu1, Sigma1, mu2, Sigma2),
+    LRT = lrt_distance(mu1, Sigma1, mu2, Sigma2),
+    LRT_trace = lrt_trace_distance(mu1, Sigma1, mu2, Sigma2)
   )
   
   if (include_fisher) {

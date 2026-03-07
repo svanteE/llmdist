@@ -1,6 +1,6 @@
 # Test D_0 with specific De and de values
 
-library(mvndist)
+library(llmdist)
 library(expm)
 
 # Define the helper function D_0 from equation (7)
@@ -115,7 +115,7 @@ mu2_eig <- as.vector(solve(De_eig) %*% de_eig)
 # Compute D0 directly from (De, de)
 d0_eig <- D0_fisher_rao_direct(de_eig, De_eig)
 
-# Compute Fisher–Rao via mvndist
+# Compute Fisher–Rao via llmdist
 fr_eig <- fisher_rao_distance(mu1_eig, Sigma1_eig, mu2_eig, Sigma2_eig)
 
 cat("De (eigen-aligned):\n"); print(De_eig)

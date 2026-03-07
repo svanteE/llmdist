@@ -1,10 +1,10 @@
-# mvndist
+# llmdist
 
 Distance Measures Between Multivariate Normal Distributions
 
 ## Overview
 
-`mvndist` provides a comprehensive set of distance and divergence measures between multivariate normal distributions, including:
+`llmdist` provides a comprehensive set of distance and divergence measures between multivariate normal distributions, including:
 
 - **Wasserstein-2 (Bures)** - Optimal transport distance with closed form (FAST, recommended for most uses)
 - **Fisher-Rao** - Information geometry metric via optimization (exact but slower)
@@ -42,10 +42,10 @@ You can install the development version from source:
 install.packages(c("expm", "MASS"))
 
 # Install from source
-install.packages("path/to/mvndist", repos = NULL, type = "source")
+install.packages("path/to/llmdist", repos = NULL, type = "source")
 
 # Or using devtools
-devtools::install_local("path/to/mvndist")
+devtools::install_local("path/to/llmdist")
 ```
 
 Note: The package no longer requires `deSolve` - Fisher-Rao distance now uses the optimized Eriksen (1987) method based on Skovgaard's (1984) Riemannian geometry framework.
@@ -53,7 +53,7 @@ Note: The package no longer requires `deSolve` - Fisher-Rao distance now uses th
 ## Quick Start
 
 ```r
-library(mvndist)
+library(llmdist)
 
 # Define two bivariate normal distributions
 mu1 <- c(0, 0)
@@ -168,7 +168,7 @@ is_ood <- d > threshold
 A detailed paper on the Fisher-Rao geodesic implementation is included with the package:
 ```r
 # View the paper location
-system.file("fisher_rao_geodesic.pdf", package = "mvndist")
+system.file("fisher_rao_geodesic.pdf", package = "llmdist")
 ```
 
 ## License

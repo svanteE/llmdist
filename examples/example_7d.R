@@ -1,7 +1,7 @@
 # Nontrivial example: 7-dimensional multivariate normals
 # Scenario: Compare two neural network embedding distributions
 
-library(mvndist)
+library(llmdist)
 set.seed(42)
 
 # ============================================================
