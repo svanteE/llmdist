@@ -193,7 +193,7 @@ w2_times  <- c(0.003, 0.015, 0.050, 0.180, 1.200)     # Wasserstein-2
 speedup <- w2_times / lrt_times
 plot(dimensions, speedup, type = "b", col = "red", lwd = 2,
      main = "Speed Advantage of LRT Trace Distance",
-     xlab = "Dimension", ylab = "Speedup Factor (W2/LRT)",
+     xlab = "Dimension", ylab = "Speedup Factor (W2/Trace LRT)",
      ylim = c(0, max(speedup) * 1.1))
 grid()
 text(dimensions, speedup + 5, paste0(round(speedup, 0), "x"), pos = 3)
