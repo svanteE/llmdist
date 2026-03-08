@@ -131,13 +131,13 @@ run_geodesic_comparison <- function(p = 2, n_sims = 100, seed = NULL) {
   cat("  Min: ", round(min(results$fisher_rao_from_A, na.rm = TRUE), 6), "\n")
   cat("  Max: ", round(max(results$fisher_rao_from_A, na.rm = TRUE), 6), "\n\n")
   
-  cat("LRT Distance:\n")
+  cat("LRT Trace Distance:\n")
   cat("  Mean:", round(mean(results$lrt_distance, na.rm = TRUE), 6), "\n")
   cat("  SD:  ", round(sd(results$lrt_distance, na.rm = TRUE), 6), "\n")
   cat("  Min: ", round(min(results$lrt_distance, na.rm = TRUE), 6), "\n")
   cat("  Max: ", round(max(results$lrt_distance, na.rm = TRUE), 6), "\n\n")
   
-  cat("Ratio (LRT / Fisher-Rao):\n")
+  cat("Ratio (LRT Trace / Fisher-Rao):\n")
   cat("  Mean:", round(mean(results$ratio_lrt_fr, na.rm = TRUE), 6), "\n")
   cat("  SD:  ", round(sd(results$ratio_lrt_fr, na.rm = TRUE), 6), "\n")
   cat("  Min: ", round(min(results$ratio_lrt_fr, na.rm = TRUE), 6), "\n")
@@ -149,17 +149,17 @@ run_geodesic_comparison <- function(p = 2, n_sims = 100, seed = NULL) {
       ggplot2::geom_point(alpha = 0.6, color = "blue") +
       ggplot2::geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
       ggplot2::labs(
-        title = paste("LRT vs Fisher-Rao Distance (p =", p, ")"),
+        title = paste("LRT Trace vs Fisher-Rao Distance (p =", p, ")"),
         x = "Fisher-Rao Distance (from A)",
-        y = "LRT Distance (from exp(A))"
+        y = "LRT Trace Distance (from exp(A))"
       ) +
       ggplot2::theme_minimal()
     print(p_plot)
   } else {
     plot(results$fisher_rao_from_A, results$lrt_distance,
-         main = paste("LRT vs Fisher-Rao Distance (p =", p, ")"),
+         main = paste("LRT Trace vs Fisher-Rao Distance (p =", p, ")"),
          xlab = "Fisher-Rao Distance (from A)",
-         ylab = "LRT Distance (from exp(A))",
+         ylab = "LRT Trace Distance (from exp(A))",
          col = "blue", pch = 19)
     abline(0, 1, lty = 2, col = "red")
     grid()
