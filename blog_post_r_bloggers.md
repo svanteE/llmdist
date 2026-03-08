@@ -2,50 +2,57 @@
 
 *Posted by Svante Eriksen*
 
-In the era of high-dimensional data and large-scale machine learning, efficiently computing distances between probability distributions has become increasingly important. Whether you're working with LLM embeddings, comparing model parameters, or analyzing high-dimensional datasets, you need fast and reliable distance measures. Today, I'm excited to introduce the **llmdist** package, which addresses this challenge with a focus on computational efficiency.
+In the era of high-dimensional data and large-scale machine learning, efficiently computing distances between probability distributions has become increasingly important. Whether you're working with LLM embeddings, comparing model parameters, or analyzing high-dimensional datasets, you need fast and reliable distance measures. We introduce the **llmdist** package, which addresses this challenge with a focus on computational efficiency. Except that for the first time we allow calculating the fisher-rao distance of multivariate normals. It is computationally expensive, but has led to efficient alternatives.
 
-## The Challenge: Speed vs. Interpretability
+### The Challenge: Speed vs. Interpretability
 
-When working with multivariate normal distributions, researchers typically reach for the well-known Wasserstein-2 (Bures) distance due to its optimal transport interpretation. However, this comes with a computational cost: expensive matrix square root operations that become prohibitive in high dimensions or when computing thousands of distances.
+When working with multivariate normal distributions the Wasserstein-2 (Bures) distance is popular. However, this comes with a computational cost: expensive matrix square root operations that become prohibitive in high dimensions or when computing thousands of distances.
 
 Consider this common scenario:
 
 ```r
-# High-dimensional example (100D) - common in modern ML
+# Imagine comparing two machine learning models in 100 dimensions
+# Model 1: baseline with zero mean and standard covariance
 p <- 100
-mu1 <- rep(0, p)
-Sigma1 <- diag(p)
-mu2 <- rep(0.1, p)  
-Sigma2 <- diag(p) + 0.1
+mu1 <- rep(0, p)           # Mean vector: all zeros
+Sigma1 <- diag(p)          # Covariance: identity matrix
 
-# Traditional approach: Wasserstein-2
-system.time(wasserstein2_distance(mu1, Sigma1, mu2, Sigma2))
+# Model 2: slightly different - small shift in mean, slightly more variable
+mu2 <- rep(0.1, p)         # Mean shifted by 0.1 in each dimension  
+Sigma2 <- diag(p) + 0.1    # Covariance: identity + small constant
+
+# How different are these two models? Let's compare approaches:
+
+# Traditional approach: Wasserstein-2 distance
+system.time(llmdist(mu1, Sigma1, mu2, Sigma2, "wasserstein2"))
 #> ~0.05 seconds per computation 🐢
 
-# For 1000 comparisons: ~50 seconds!
+# NEW: LRT trace distance (default)
+system.time(llmdist(mu1, Sigma1, mu2, Sigma2))
+#> ~0.001 seconds per computation ⚡
+
+# The difference: 50x speedup! 
+# For 1000 comparisons: LRT trace ~1 second vs Wasserstein-2 ~50 seconds
 ```
 
 In applications requiring real-time responses or large-scale comparisons, this quickly becomes impractical.
 
-## Introducing llmdist: Speed Without Compromise
+### Introducing llmdist: Speed Without Compromise
 
 The **llmdist** package provides a comprehensive suite of distance measures between multivariate normal distributions, with a game-changing focus on computational efficiency. The standout feature is the **LRT trace distance** - a lightning-fast alternative that maintains similar ordering properties to Wasserstein-2.
 
 ### Installation
 
 ```r
-# Install from GitHub
+# Install from GitHub (make sure you have devtools installed)
+if (!require(devtools)) install.packages("devtools")
 devtools::install_github("svanteE/llmdist")
 library(llmdist)
 ```
 
-## The Star of the Show: LRT Trace Distance
+The **LRT (Likelihood Ratio Test) trace distance** has higher computational efficiency. Instead of expensive matrix square roots, it uses only basic matrix operations (trace) while preserving the essential property of distance ordering.
 
-The **LRT (Likelihood Ratio Test) trace distance** represents a breakthrough in computational efficiency. Instead of expensive matrix square roots, it uses only basic matrix operations (trace, determinant) while preserving the essential property of distance ordering.
-
-### Key Innovation: Trace-Based Pseudodeterminants
-
-Traditional approaches use `det(A)`, but LRT trace uses `(tr(A)/p)^p`, leveraging the AM-GM inequality relationship. This seemingly simple change provides:
+Traditional approaches use expensive $det(A)$ calculations, but LRT trace uses only $(tr(A)/p)^p$, leveraging the AM-GM inequality relationship. This seemingly simple change provides:
 
 - **50x speed improvement** over Wasserstein-2
 - **Similar distance ordering** for practical applications  
@@ -78,7 +85,7 @@ For 1000 distance computations:
 - **LRT trace**: ~1 second ⚡
 - **Wasserstein-2**: ~50 seconds 🐢
 
-## Practical Example: Clustering High-Dimensional Distributions
+### Practical Example: Clustering High-Dimensional Distributions
 
 Here's a realistic machine learning scenario where speed matters:
 
@@ -122,7 +129,7 @@ plot(hc, main = "Clustering High-Dimensional Distributions",
 
 This computation would take minutes with traditional Wasserstein-2, but completes in seconds with LRT trace!
 
-## Method Comparison: When to Use What
+### Method Comparison: When to Use What
 
 The llmdist package implements 8 different distance measures. Here's when to use each:
 
@@ -175,7 +182,7 @@ for(window in time_windows) {
 
 ## Performance Benchmarks
 
-I conducted systematic benchmarks across different dimensions:
+We conducted systematic benchmarks across different dimensions:
 
 ```r
 # Benchmark across dimensions
@@ -199,10 +206,11 @@ The speedup increases dramatically with dimension, reaching **100x faster** at p
 While prioritizing speed, the LRT trace distance maintains mathematical rigor. It's based on:
 
 1. **Likelihood Ratio Test concepts** from statistical hypothesis testing
-2. **Trace-based pseudodeterminants** using the AM-GM inequality relationship  
+2. **Determinant-free approximations** using the AM-GM inequality relationship  
 3. **Proper metric properties** (non-negativity, symmetry, triangle inequality)
 
-The key insight: `(tr(A)/p)^p` approximates `det(A)` through geometric-arithmetic mean relationships, providing similar ordering properties with vastly different computational requirements.
+The trivial observation : $(tr(A)/p)^p$
+approximates $det(A)$ through geometric-arithmetic mean relationships. The non trivial observations are similar ordering properties with vastly different computational requirements.
 
 ## Looking Forward
 
@@ -218,7 +226,8 @@ The llmdist package opens new possibilities for:
 Get started with just a few lines:
 
 ```r
-# Install the package
+# Install the package (make sure to use the exact repository name!)
+if (!require(devtools)) install.packages("devtools")
 devtools::install_github("svanteE/llmdist")
 
 # Basic usage - fast by default!
@@ -228,6 +237,10 @@ dist <- llmdist(mu1, Sigma1, mu2, Sigma2)
 # Compare all available methods
 compare_distances(mu1, Sigma1, mu2, Sigma2)
 ```
+
+**Installation troubleshooting:**
+- Make sure you typed `"svanteE/llmdist"` exactly (case-sensitive)
+- If you get a 404 error, the repository might be private or the name was mistyped
 
 ## Conclusion
 
