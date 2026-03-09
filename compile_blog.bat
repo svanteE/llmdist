@@ -1,0 +1,6 @@
+@echo off
+echo Compiling blog post to HTML...
+pandoc blog_post_r_bloggers.md -o blog_post_r_bloggers.html --standalone --embed-resources
+echo Done! Opening in browser...
+start blog_post_r_bloggers.html
+pause
