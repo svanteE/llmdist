@@ -42,20 +42,44 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
+          sudo apt-get install -y \
+            libcurl4-openssl-dev \
+            libssl-dev \
+            libxml2-dev \
+            libgit2-dev \
+            libharfbuzz-dev \
+            libfribidi-dev \
+            libfreetype6-dev \
+            libpng-dev \
+            libtiff5-dev \
+            libjpeg-dev \
+            gfortran \
+            build-essential
 
       - name: Install dependencies
         run: |
+          # Install core packages
           install.packages(c("remotes", "rcmdcheck"))
-          # Install expm first (potential Windows compilation issue)
-          install.packages("expm", type = "binary")
-          remotes::install_deps(dependencies = TRUE)
+          
+          # Install expm - use binary on Windows, compile on Linux/macOS
+          if (Sys.info()[["sysname"]] == "Windows") {
+            install.packages("expm", type = "binary")
+          } else {
+            install.packages("expm")
+          }
+          
+          # Install package dependencies
+          remotes::install_deps(dependencies = TRUE, upgrade = "never")
         shell: Rscript {0}
 
       - name: Check package
         run: |
           options(crayon.enabled = TRUE)
-          rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
+          rcmdcheck::rcmdcheck(
+            args = c("--no-manual", "--as-cran"),
+            error_on = "error",
+            check_dir = "check"
+          )
         shell: Rscript {0}
 
       - name: Upload check results
