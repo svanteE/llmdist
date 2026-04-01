@@ -1,29 +1,26 @@
 # llmdist Blog
 
-A simple Jekyll blog for the llmdist R package hosted on GitHub Pages.
+A Jekyll blog for the llmdist R package hosted on GitHub Pages.
 
-## Quick Setup
+## ✅ Setup Complete!
 
-1. **Create GitHub Repository**
-   ```bash
-   # If you haven't already, initialize git and push to GitHub
-   git init
-   git add .
-   git commit -m "Initial blog setup"
-   git branch -M main
-   git remote add origin https://github.com/svanteE/llmdist.git
-   git push -u origin main
-   ```
+Your blog is ready to go. Just enable GitHub Pages:
 
-2. **Enable GitHub Pages**
-   - Go to your repository settings on GitHub
-   - Navigate to "Pages" section
-   - Select "Deploy from a branch"
-   - Choose "main" branch and "/ (root)" folder
-   - Click "Save"
+### 🚀 Enable GitHub Pages (One-time setup):
 
-3. **Your blog will be available at:**
-   `https://svanteE.github.io/llmdist/`
+1. **Go to your repository settings:** https://github.com/svanteE/llmdist/settings/pages
+
+2. **Configure Pages:**
+   - **Source:** "Deploy from a branch"
+   - **Branch:** "main" 
+   - **Folder:** "/ (root)"
+   - Click **"Save"**
+
+3. **Your blog will be live at:** `https://svanteE.github.io/llmdist/`
+
+### 📝 No Custom Workflows Needed!
+
+GitHub automatically builds and deploys Jekyll sites from the main branch. No custom GitHub Actions required.
 
 ## File Structure
 
@@ -34,7 +31,8 @@ A simple Jekyll blog for the llmdist R package hosted on GitHub Pages.
 ├── _posts/
 │   └── 2026-04-01-llmdist-package-introduction.md  # Your blog post
 ├── index.md            # Homepage
-└── README_BLOG.md      # This file
+├── Gemfile            # GitHub Pages compatible dependencies
+└── .jekyllignore      # Files to exclude from Jekyll build
 ```
 
 ## Writing New Posts

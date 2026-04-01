@@ -1,21 +1,9 @@
 source "https://rubygems.org"
 
-# Core Jekyll
-gem "jekyll", "~> 4.3.0"
+# GitHub Pages gem (includes Jekyll and approved plugins)
+gem "github-pages", group: :jekyll_plugins
 
-# Theme
-gem "minima", "~> 2.5"
-
-# Jekyll plugins
+# Additional Jekyll plugins (must be GitHub Pages approved)
 group :jekyll_plugins do
-  gem "jekyll-feed", "~> 0.12"
+  gem "jekyll-feed"
 end
-
-# Windows and JRuby dependencies
-platforms :mingw, :x64_mingw, :mswin, :jruby do
-  gem "tzinfo", ">= 1", "< 3"
-  gem "tzinfo-data"
-end
-
-# Performance-booster for watching directories on Windows
-gem "wdm", "~> 0.1.1", :platforms => [:mingw, :x64_mingw, :mswin]

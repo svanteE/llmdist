@@ -14,7 +14,7 @@ markdown: kramdown
 highlighter: rouge
 theme: minima
 
-# Plugins
+# Plugins (GitHub Pages compatible only)
 plugins:
   - jekyll-feed
 
@@ -30,3 +30,4 @@ exclude:
   - man/
   - tests/
   - examples/
+  - .github/
