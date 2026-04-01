@@ -1,19 +1,16 @@
-# Basic Jekyll configuration without theme
+# Ultra minimal Jekyll configuration
 title: llmdist
 description: Fast distance computation between multivariate normal distributions
 
 # Build settings
 markdown: kramdown
-highlighter: rouge
 
-# Plugins (minimal)
-plugins:
-  - jekyll-feed
+# No plugins to avoid dependencies
+plugins: []
 
-# Exclude everything except essential files
+# Exclude everything except core content
 exclude:
-  - Gemfile
-  - Gemfile.lock
+  - Gemfile*
   - vendor/
   - .bundle/
   - node_modules/
@@ -29,3 +26,10 @@ exclude:
   - examples/
   - README_submission.md
   - "*.Rd"
+  - "*.pdf"
+  - "*.log"
+  - "*.out"
+  - "*.html"
+  - .git/
+  - .github/
+  - .vscode/
