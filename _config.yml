@@ -1,29 +1,17 @@
-# Minimal GitHub Pages configuration
+# Basic Jekyll configuration without theme
 title: llmdist
 description: Fast distance computation between multivariate normal distributions
 
-# GitHub repository
-repository: svantee/llmdist
-github:
-  repository_name: llmdist
-  repository_nwo: svantee/llmdist
-
-# GitHub Pages settings
-baseurl: ""
-url: "https://svantee.github.io"
-
-# Build settings (GitHub Pages defaults)
+# Build settings
 markdown: kramdown
 highlighter: rouge
-theme: minima
 
-# GitHub Pages approved plugins only
+# Plugins (minimal)
 plugins:
   - jekyll-feed
 
-# Exclude R package files and problematic files
+# Exclude everything except essential files
 exclude:
-  - README_submission.md
   - Gemfile
   - Gemfile.lock
   - vendor/
@@ -33,9 +21,11 @@ exclude:
   - NAMESPACE
   - LICENSE
   - "*.R"
-  - "*.bat"
+  - "*.bat" 
   - "*.ps1"
   - tests/
   - man/
   - inst/
   - examples/
+  - README_submission.md
+  - "*.Rd"

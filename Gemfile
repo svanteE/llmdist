@@ -1,4 +1,8 @@
 source "https://rubygems.org"
 
-# GitHub Pages
-gem "github-pages", group: :jekyll_plugins
+gem "jekyll", "~> 4.3.0"
+gem "jekyll-feed", "~> 0.12"
+
+group :jekyll_plugins do
+  gem "jekyll-feed"
+end
