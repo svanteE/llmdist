@@ -12,23 +12,19 @@ author:
 # Build settings
 markdown: kramdown
 highlighter: rouge
-theme: minima
+remote_theme: jekyll/minima
 
-# Plugins
+# Plugins (GitHub Pages compatible)
 plugins:
   - jekyll-feed
-  - jekyll-sitemap
 
-# Exclude files
+# Exclude files (GitHub Pages compatible)
 exclude:
   - README.md
   - LICENSE
   - Gemfile
   - Gemfile.lock
-  - node_modules
-  - vendor
-  - .R
-  - *.R
+  - "*.R"
   - DESCRIPTION
   - NAMESPACE
   - man/
