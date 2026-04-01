@@ -2,6 +2,9 @@
 title: llmdist
 description: Fast distance computation between multivariate normal distributions
 
+# GitHub repository
+repository: svantee/llmdist
+
 # GitHub Pages settings
 baseurl: ""
 url: "https://svanteE.github.io"
@@ -13,3 +16,22 @@ highlighter: rouge
 # GitHub Pages approved plugins only
 plugins:
   - jekyll-feed
+
+# Exclude R package files and problematic files
+exclude:
+  - README_submission.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
+  - .bundle/
+  - node_modules/
+  - DESCRIPTION
+  - NAMESPACE
+  - LICENSE
+  - "*.R"
+  - "*.bat"
+  - "*.ps1"
+  - tests/
+  - man/
+  - inst/
+  - examples/
