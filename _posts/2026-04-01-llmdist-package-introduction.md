@@ -2,17 +2,11 @@
 layout: default
 title: "Distance Computation Between Multivariate Normal Distributions: The llmdist Package"
 date: 2026-04-01
-author: "Svante Eriksen"
-categories: [R, statistics, machine-learning]
-tags: [distance-metrics, multivariate-normal, fisher-rao, wasserstein, performance]
-excerpt: "Introducing the llmdist package for efficient distance computation between multivariate normal distributions, featuring the first implementation of Fisher-Rao distance and a 50x faster LRT trace distance alternative."
 ---
 
 # Distance Computation Between Multivariate Normal Distributions: The llmdist Package
 
-*Posted by {{ page.author }}*
-
-In the era of high-dimensional data, efficiently computing distances between probability distributions has become increasingly important. Whether you're working with LLM embeddings, comparing model parameters, or analyzing high-dimensional datasets, you need fast and reliable distance measures. We introduce the **llmdist** package, which addresses this challenge with a focus on computational efficiency. Except that for the first time we allow calculating the fisher-rao distance of multivariate normals. It is computationally expensive, but has inspired to efficient alternatives.
+In the era of high-dimensional data, efficiently computing distances between probability distributions has become increasingly important. We introduce the **llmdist** package, which addresses this challenge with a 50x speedup over traditional methods.
 
 ## Speed vs. Interpretability
 

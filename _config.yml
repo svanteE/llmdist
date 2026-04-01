@@ -1,33 +1,15 @@
-# Site settings
-title: "llmdist Blog"
-description: "Distance computation between multivariate normal distributions"
+# Minimal GitHub Pages configuration
+title: llmdist
+description: Fast distance computation between multivariate normal distributions
+
+# GitHub Pages settings
+baseurl: ""
 url: "https://svanteE.github.io"
-baseurl: "/llmdist"
 
-# Author
-author:
-  name: "Svante Eriksen"
-  email: "svante@example.com"
-
-# Build settings
+# Build settings (GitHub Pages defaults)
 markdown: kramdown
 highlighter: rouge
-theme: minima
 
-# Plugins (GitHub Pages compatible only)
+# GitHub Pages approved plugins only
 plugins:
   - jekyll-feed
-
-# Exclude files (GitHub Pages compatible)
-exclude:
-  - README.md
-  - LICENSE
-  - Gemfile
-  - Gemfile.lock
-  - "*.R"
-  - DESCRIPTION
-  - NAMESPACE
-  - man/
-  - tests/
-  - examples/
-  - .github/

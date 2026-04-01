@@ -1,78 +1,42 @@
 ---
 layout: default
-title: "llmdist: Distance Computation for Multivariate Normal Distributions"
 ---
 
-<div class="row">
-    <div class="col-md-8">
-        <h1>{{ site.title }}</h1>
-        <p class="lead">{{ site.description }}</p>
-        
-        <hr>
-        
-        <h2>Latest Posts</h2>
-        
-        {% for post in site.posts %}
-        <article class="mb-4">
-            <h3><a href="{{ post.url | relative_url }}" class="text-decoration-none">{{ post.title }}</a></h3>
-            <p class="post-meta">
-                <small class="text-muted">{{ post.date | date: "%B %d, %Y" }} by {{ post.author }}</small>
-            </p>
-            <p>{{ post.excerpt }}</p>
-            <a href="{{ post.url | relative_url }}" class="btn btn-primary btn-sm">Read More</a>
-        </article>
-        <hr>
-        {% endfor %}
-        
-        {% if site.posts.size == 0 %}
-        <p class="text-muted">No posts yet. Check back soon!</p>
-        {% endif %}
-    </div>
-    
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Package Info</h5>
-            </div>
-            <div class="card-body">
-                <p><strong>llmdist</strong> provides efficient distance computation between multivariate normal distributions.</p>
-                
-                <h6>Key Features:</h6>
-                <ul class="list-unstyled">
-                    <li>✅ First Fisher-Rao implementation</li>
-                    <li>✅ 50x faster LRT trace distance</li>
-                    <li>✅ 8 different distance methods</li>
-                    <li>✅ High-dimensional support</li>
-                </ul>
-                
-                <hr>
-                
-                <h6>Installation:</h6>
-                <pre><code class="language-r">devtools::install_github("svanteE/llmdist")</code></pre>
-                
-                <hr>
-                
-                <div class="d-grid gap-2">
-                    <a href="https://github.com/svanteE/llmdist" class="btn btn-outline-dark btn-sm">
-                        📁 GitHub Repository
-                    </a>
-                    <a href="#" class="btn btn-outline-secondary btn-sm">
-                        📖 Documentation
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="card mt-3">
-            <div class="card-header">
-                <h6 class="mb-0">Categories</h6>
-            </div>
-            <div class="card-body">
-                <span class="badge bg-primary me-1">R</span>
-                <span class="badge bg-secondary me-1">Statistics</span>
-                <span class="badge bg-success me-1">Machine Learning</span>
-                <span class="badge bg-info">Performance</span>
-            </div>
-        </div>
-    </div>
-</div>
+# llmdist: Fast Distance Computation for Multivariate Normal Distributions
+
+Fast and comprehensive distance computation between multivariate normal distributions with a 50x speedup over traditional methods.
+
+## 🎯 Why llmdist?
+
+- **⚡ 50x faster** than traditional Wasserstein-2 distance
+- **🔬 First implementation** of Fisher-Rao distance for multivariate normals  
+- **📊 8 different distance measures** for comprehensive analysis
+- **🎛️ Simple API** - one function for all methods
+
+## Installation
+
+```r
+# Install from GitHub
+devtools::install_github("svanteE/llmdist")
+library(llmdist)
+```
+
+## Quick Start
+
+```r
+# Define two distributions
+mu1 <- c(0, 0); Sigma1 <- diag(2)
+mu2 <- c(1, 1); Sigma2 <- matrix(c(2, 0.5, 0.5, 1), 2, 2)
+
+# Fast default (LRT trace)
+llmdist(mu1, Sigma1, mu2, Sigma2)
+
+# Compare all methods
+compare_distances(mu1, Sigma1, mu2, Sigma2)
+```
+
+## Latest Posts
+
+{% for post in site.posts %}
+- [{{ post.title }}]({{ post.url }}) - {{ post.date | date: "%B %d, %Y" }}
+{% endfor %}
