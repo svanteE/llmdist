@@ -12,9 +12,9 @@ author:
 # Build settings
 markdown: kramdown
 highlighter: rouge
-remote_theme: jekyll/minima
+theme: minima
 
-# Plugins (GitHub Pages compatible)
+# Plugins
 plugins:
   - jekyll-feed
 
