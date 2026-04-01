@@ -1,0 +1,69 @@
+name: Fresh Jekyll Build v2
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  fresh-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (fresh)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          clean: true
+      
+      - name: Debug - List all files
+        run: |
+          echo "=== All files in repository ==="
+          find . -type f -name "*" | sort
+          echo "=== Checking for problematic files ==="
+          ls -la README_submission.* || echo "No README_submission files"
+          ls -la _config.yml
+          cat _config.yml
+      
+      - name: Remove any problematic files
+        run: |
+          rm -f README_submission.md 
+          rm -rf _site .jekyll-cache .bundle vendor
+          rm -f Gemfile.lock
+          echo "Cleaned problematic files"
+      
+      - name: Setup Ruby (clean)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler-cache: false
+      
+      - name: Install Jekyll (minimal)
+        run: |
+          bundle install
+          echo "=== Gemfile.lock content ==="
+          cat Gemfile.lock
+      
+      - name: Build Jekyll (debug)
+        run: |
+          echo "=== Building with Jekyll ==="
+          bundle exec jekyll build --verbose --trace
+        env:
+          JEKYLL_ENV: production
+      
+      - name: Check build output
+        run: |
+          echo "=== Build output ==="
+          ls -la _site/
+          find _site -name "*.html" | head -5
+      
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          force_orphan: true

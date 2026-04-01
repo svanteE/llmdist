@@ -35,8 +35,11 @@ llmdist(mu1, Sigma1, mu2, Sigma2)
 compare_distances(mu1, Sigma1, mu2, Sigma2)
 ```
 
-## Latest Posts
+## 📖 Blog Post
 
-{% for post in site.posts %}
-- [{{ post.title }}]({{ post.url }}) - {{ post.date | date: "%B %d, %Y" }}
-{% endfor %}
+**[Read our detailed package introduction →](blog-post.html)**
+
+## 🔗 Links
+
+- [GitHub Repository](https://github.com/svanteE/llmdist)
+- [Package Documentation](https://github.com/svanteE/llmdist/tree/main/man)
