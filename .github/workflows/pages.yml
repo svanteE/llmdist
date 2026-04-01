@@ -1,4 +1,4 @@
-name: Build and Deploy Jekyll
+name: Build and Deploy Jekyll (Fresh)
 
 on:
   push:
@@ -16,22 +16,35 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          clean: true
+      
+      - name: Clear all caches
+        run: |
+          rm -rf _site .jekyll-cache .bundle vendor Gemfile.lock
+          rm -f README_submission.md || true
+          echo "Cleared all caches and problematic files"
       
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
-          bundler-cache: true
+          bundler-cache: false
       
-      - name: Build Jekyll
+      - name: Fresh bundle install
         run: |
-          bundle exec jekyll build
+          bundle install --path vendor/bundle
+          echo "Bundle installed fresh"
+      
+      - name: Build Jekyll (minimal)
+        run: |
+          bundle exec jekyll build --verbose
         env:
           JEKYLL_ENV: production
-          PAGES_REPO_NWO: svantee/llmdist
       
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_site
+          force_orphan: true
