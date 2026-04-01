@@ -1,10 +1,20 @@
+---
+layout: default
+title: "Distance Computation Between Multivariate Normal Distributions: The llmdist Package"
+date: 2026-04-01
+author: "Svante Eriksen"
+categories: [R, statistics, machine-learning]
+tags: [distance-metrics, multivariate-normal, fisher-rao, wasserstein, performance]
+excerpt: "Introducing the llmdist package for efficient distance computation between multivariate normal distributions, featuring the first implementation of Fisher-Rao distance and a 50x faster LRT trace distance alternative."
+---
+
 # Distance Computation Between Multivariate Normal Distributions: The llmdist Package
 
-*Posted by Svante Eriksen*
+*Posted by {{ page.author }}*
 
 In the era of high-dimensional data, efficiently computing distances between probability distributions has become increasingly important. Whether you're working with LLM embeddings, comparing model parameters, or analyzing high-dimensional datasets, you need fast and reliable distance measures. We introduce the **llmdist** package, which addresses this challenge with a focus on computational efficiency. Except that for the first time we allow calculating the fisher-rao distance of multivariate normals. It is computationally expensive, but has inspired to efficient alternatives.
 
-### Speed vs. Interpretability
+## Speed vs. Interpretability
 
 When working with multivariate normal distributions the Wasserstein-2 (Bures) distance is popular. This comes with a computational cost: matrix square root operations that become prohibitive in high dimensions or when computing thousands of distances.
 
@@ -37,12 +47,12 @@ system.time(llmdist(mu1, Sigma1, mu2, Sigma2))
 
 In applications requiring real-time responses or large-scale comparisons, this quickly becomes an issue.
 
-### Introducing llmdist
+## Introducing llmdist
 
 The **llmdist** package provides a comprehensive suite of distance measures between multivariate normal distributions. A new feature is the **LRT trace distance** - a fast alternative that maintains similar ordering properties to Wasserstein-2.
 And another new feature is the fisher-rao distance, which has been a theoretical quantity(p>1). 
 
-### Installation
+## Installation
 
 ```r
 # Install from GitHub (make sure you have devtools installed)
@@ -59,8 +69,7 @@ Traditional approaches use expensive $det(A)$ calculations, but LRT trace uses o
 - **Similar distance ordering** for practical applications  
 - **Robust performance** across different dimensionalities
 
-
-### Practical Example: Clustering High-Dimensional Distributions
+## Practical Example: Clustering High-Dimensional Distributions
 
 Here's a realistic machine learning scenario where speed matters:
 
@@ -104,7 +113,7 @@ plot(hc, main = "Clustering High-Dimensional Distributions",
 
 This computation would take minutes with traditional Wasserstein-2, but completes in seconds.
 
-### Method Comparison: When to Use What
+## Method Comparison: When to Use What
 
 The llmdist package implements 8 different distance measures. Here's when to use 4 of these:
 
@@ -149,85 +158,15 @@ layer_similarity <- llmdist(layer1_mu, layer1_cov, layer2_mu, layer2_cov)
 ### 3. Time Series Analysis
 ```r
 # Compare distributional properties across time windows
-for(window in time_windows) {
-  dist <- llmdist(baseline_stats$mu, baseline_stats$Sigma,
-                 window_stats$mu, window_stats$Sigma)
-  anomaly_scores[window] <- dist
-}
+window_distances <- llmdist(window1_mu, window1_cov, window2_mu, window2_cov)
 ```
-
-## Performance Benchmarks
-
-We conducted systematic benchmarks across different dimensions:
-
-```r
-# Benchmark across dimensions
-dimensions <- c(10, 50, 100, 200, 500)
-lrt_times <- c(0.001, 0.002, 0.003, 0.005, 0.012)      # LRT trace
-w2_times  <- c(0.003, 0.015, 0.050, 0.180, 1.200)     # Wasserstein-2
-
-speedup <- w2_times / lrt_times
-plot(dimensions, speedup, type = "b", col = "red", lwd = 2,
-     main = "Speed Advantage of LRT Trace Distance",
-     xlab = "Dimension", ylab = "Speedup Factor (W2/Trace LRT)",
-     ylim = c(0, max(speedup) * 1.1))
-grid()
-text(dimensions, speedup + 5, paste0(round(speedup, 0), "x"), pos = 3)
-```
-
-The speedup increases dramatically with dimension, reaching **a hundred times faster** at p=500.
-
-## Mathematical Soundness
-
-While prioritizing speed, the LRT trace distance maintains mathematical rigor. It's based on:
-
-1. **Likelihood Ratio Test concepts** from statistical hypothesis testing
-2. **Determinant-free approximations** using the AM-GM inequality relationship  
-3. **Proper metric properties** (non-negativity, symmetry, triangle inequality)
-
-The trivial observation : $(tr(A)/p)^p$
-approximates $det(A)$ through geometric-arithmetic mean relationships. The non trivial observations are similar ordering properties with vastly different computational requirements.
-
-## Looking Forward
-
-The llmdist package opens new possibilities for:
-
-- **Real-time distribution comparison** in streaming applications
-- **Large-scale clustering** of high-dimensional distributions  
-- **Interactive exploration** of model parameter spaces
-- **Efficient similarity search** in embedding spaces
-
-## Get started.
-
-With a few lines:
-
-```r
-# Install the package (make sure to use the exact repository name!)
-if (!require(devtools)) install.packages("devtools")
-devtools::install_github("svanteE/llmdist")
-
-# Basic usage - fast by default!
-library(llmdist)
-dist <- llmdist(mu1, Sigma1, mu2, Sigma2)
-
-# Compare all available methods
-compare_distances(mu1, Sigma1, mu2, Sigma2)
-```
-
-**Installation troubleshooting:**
-- Make sure you typed `"svanteE/llmdist"` exactly (case-sensitive)
-- If you get a 404 error, the name was probably mistyped.
 
 ## Conclusion
 
-The **llmdist** package, particularly its **LRT trace distance**, represents a significant step forward in computational efficiency for distribution comparison. By achieving 50-100x speedups while maintaining meaningful distance relationships, it makes previously impractical analyses feasible. At the same time, We have for the first time the opportunity to calculate the fisher-rao distance, which is important in an information theoretic setting.
+The **llmdist** package brings both theoretical advances (first multivariate Fisher-Rao implementation) and practical improvements (50x speedup with LRT trace) to distance computation between multivariate normal distributions. Whether you're clustering high-dimensional data, comparing model parameters, or analyzing time series, llmdist provides the tools you need for efficient and reliable distance computation.
 
-Whether you're working with high-dimensional embeddings, comparing model parameters, or analyzing large distribution datasets, llmdist provides the speed and flexibility needed for modern applications.
-
-**Links:**
-- [GitHub Repository](https://github.com/svanteE/llmdist)  
-- [Package Documentation](https://github.com/svanteE/llmdist#readme)
+Try it out and let us know how it works for your applications!
 
 ---
 
-*This blog post introduces work developed at Aalborg University. The package is open-source and contributions are welcome.*
+*For more details, visit the [GitHub repository](https://github.com/svanteE/llmdist) or install directly with `devtools::install_github("svanteE/llmdist")`.*

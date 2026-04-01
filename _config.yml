@@ -1,0 +1,36 @@
+# Site settings
+title: "llmdist Blog"
+description: "Distance computation between multivariate normal distributions"
+url: "https://svanteE.github.io"
+baseurl: "/llmdist"
+
+# Author
+author:
+  name: "Svante Eriksen"
+  email: "svante@example.com"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+theme: minima
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# Exclude files
+exclude:
+  - README.md
+  - LICENSE
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - .R
+  - *.R
+  - DESCRIPTION
+  - NAMESPACE
+  - man/
+  - tests/
+  - examples/

@@ -1,0 +1,37 @@
+Subject: Guest Post Submission - Fast Distance Computation with llmdist Package
+
+Dear Tal Galili,
+I would like to consider presenting an R package
+Title: "Fast Distance Computation Between Multivariate Normal Distributions: Introducing the llmdist Package"
+Author: Svante Eriksen (Aalborg University)
+Content Focus: LRT trace distance achieving 50-100x speedup over traditional methods
+
+PACKAGE INFORMATION:
+- GitHub: https://github.com/svanteE/llmdist
+- Installation: devtools::install_github("svanteE/llmdist")
+- Key Innovation: LRT trace distance for high-dimensional 
+applications
+
+BLOG POST HIGHLIGHTS:
+✅ Practical performance benchmarks showing dramatic speedup
+✅ Real-world applications (LLM embeddings, model comparison)
+✅ Complete code examples and usage guide  
+✅ Professional presentation suitable for R community
+✅ Introduces novel computational technique with mathematical rigor
+
+I understand R-bloggers typically aggregates from existing blogs, 
+but I wondered if you might consider this as 
+a guest contribution. 
+Otherwise, please let me know about alternative channels.
+
+Please find the blog post attached as a self-contained HTML file. 
+
+Thank you for your time and consideration.
+
+Best regards,
+Svante Eriksen
+Aalborg University
+[svante@math.aau.dk]
+
+ATTACHMENTS:
+- blog_post_r_bloggers.html (Complete blog post)
