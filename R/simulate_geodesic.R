@@ -5,6 +5,7 @@
 #'
 #' @param p Dimension of the problem (default: 2)
 #' @param n_sims Number of simulations (default: 100)
+#' @param k Scaling factor for constructing B matrix (default: 1)
 #' @param seed Random seed for reproducibility (default: NULL)
 #'
 #' @return A data frame with columns:

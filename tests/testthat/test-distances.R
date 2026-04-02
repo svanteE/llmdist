@@ -67,7 +67,7 @@ test_that("compare_distances returns all metrics", {
   
   dists <- compare_distances(mu1, Sigma1, mu2, Sigma2)
   
-  expect_length(dists, 5)
+  expect_length(dists, 7)  # Now returns 7 distances by default
   expect_true(all(dists >= 0))
   expect_true(all(is.finite(dists)))
 })

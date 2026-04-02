@@ -13,6 +13,22 @@
 ^codecov\.yml$
 ^CONTRIBUTING\.md$
 ^CONTRIBUTING\.html$
+^# Code Citations\.md$
+^Gemfile$
+^README_BLOG\.md$
+^_config\.yml$
+^_layouts$
+^blog-post\.md$
+^blog_post_r_bloggers\.html$
+^blog_post_r_bloggers\.md$
+^compile_blog\.bat$
+^compile_blog\.ps1$
+^index\.md$
+^migrate_4\.5\.0_to_4\.5\.2\.R$
+^migrate_packages\.R$
+^quick_blog_setup\.md$
+^run_migration\.R$
+^submission_email_template\.txt$
 ^_roxy\.R$
 ^build_package\.R$
 ^install_package\.R$

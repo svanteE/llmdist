@@ -543,8 +543,10 @@ fisher_rao_geodesic_numerical <- function(mu1, Sigma1, mu2, Sigma2,
 #' @param Sigma2 Covariance matrix of the second distribution
 #' @param method Optimization method (default: "BFGS")
 #' @param control Control parameters for optim()
+#' @param returnA Logical; if TRUE, return both distance and A matrix (default: FALSE)
 #'
-#' @return The Fisher-Rao distance (non-negative scalar), or NA if computation fails
+#' @return The Fisher-Rao distance (non-negative scalar), or if returnA=TRUE, a list
+#'   containing the distance and the A matrix. Returns NA if computation fails
 #'
 #' @examples
 #' # Bivariate example
@@ -669,12 +671,14 @@ fisher_rao_distance <- function(mu1, Sigma1, mu2, Sigma2,
   
   # Check optimal A matrix structure
   #structure_check <- check_optimal_A_structure(A, tol = 1e-4)
-  assign("zzztmp",1,envir=.GlobalEnv)
+  # NOTE: Debug assignment commented out for CRAN compliance
+  # assign("zzztmp",1,envir=.GlobalEnv)
   # Check convergence
   if (result$value > 1e-4) {
     warning(paste("Optimization may not have converged. f(y) =", 
                   round(result$value, 8)))
-    assign("zzztmp",0,envir=.GlobalEnv)
+    # NOTE: Debug assignment commented out for CRAN compliance  
+    # assign("zzztmp",0,envir=.GlobalEnv)
   }
   
   # Warn if optimal structure not achieved
@@ -800,7 +804,7 @@ is_eigenvector <- function(A, v, tol = 1e-10) {
 #' }
 #'
 #' @importFrom expm logm
-#' @export
+#' @keywords internal
 fisher_rao_de_eigenvector <- function(de, De, tol = 1e-8) {
   # Input validation
   if (!is.matrix(De)) {
@@ -955,7 +959,7 @@ normalize_mvnorm_inputs <- function(mu1, Sigma1, mu2, Sigma2) {
 #' }
 #'
 #' @importFrom expm logm
-#' @export
+#' @keywords internal
 #'
 debug_A_structure <- function(mu1, Sigma1, mu2, Sigma2) {
   norm <- normalize_mvnorm_inputs(mu1, Sigma1, mu2, Sigma2)
@@ -1126,7 +1130,7 @@ debug_A_structure <- function(mu1, Sigma1, mu2, Sigma2) {
 #'   \item{A}{The A matrix used}
 #'
 #' @importFrom expm expm
-#' @export
+#' @keywords internal
 compare_A_matrices <- function(mu1, Sigma1, mu2, Sigma2) {
   norm <- normalize_mvnorm_inputs(mu1, Sigma1, mu2, Sigma2)
   mu1 <- norm$mu1; mu2 <- norm$mu2; Sigma1 <- norm$Sigma1; Sigma2 <- norm$Sigma2; p <- norm$p
@@ -1256,7 +1260,7 @@ inspect_A_blocks <- function(A) {
 }
 
 #' @importFrom expm logm
-#' @export
+#' @keywords internal
 fisher_rao_distance_both <- function(mu1, Sigma1, mu2, Sigma2) {
   dbg <- debug_A_structure(mu1, Sigma1, mu2, Sigma2)
   dist_eigen <- if (!is.null(dbg$A_eigenvector)) sqrt(sum(dbg$A_eigenvector^2) / 2) else NA_real_
@@ -1302,7 +1306,7 @@ fisher_rao_distance_both <- function(mu1, Sigma1, mu2, Sigma2) {
 #'   \item{reconstructed_Sigma}{Reconstructed covariance at t=1}
 #'
 #' @importFrom expm expm
-#' @export
+#' @keywords internal
 validate_A_solution <- function(A, mu1, Sigma1, mu2, Sigma2) {
   norm <- normalize_mvnorm_inputs(mu1, Sigma1, mu2, Sigma2)
   mu1 <- norm$mu1; mu2 <- norm$mu2; Sigma1 <- norm$Sigma1; Sigma2 <- norm$Sigma2; p <- norm$p
